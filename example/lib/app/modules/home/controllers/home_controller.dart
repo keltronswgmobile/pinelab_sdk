@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 
-// import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-// import 'package:receive_intent/receive_intent.dart';
 
 class HomeController extends GetxController {
-  String _error = '';
+  String _flutterResponse = '';
+  String _pinelabResponse = '';
   final pinelabSdk = PinlabSdk();
 
   Future<void> openPaymentApp() async {
@@ -27,71 +26,53 @@ class HomeController extends GetxController {
       };
       final doTransactionPayload = jsonEncode(transactionMap);
 
-      final result = await pinelabSdk.makePayment(doTransactionPayload);
-
-      // final intent = AndroidIntent(
-      //   package: 'com.pinelabs.masterapp',
-      //   action: 'com.pinelabs.masterapp.HYBRID_REQUEST',
-      //   arguments: {
-      //     'REQUEST_DATA': doTransactionPayload,
-      //     'packageName': 'org.keltron.ticketapp',
-      //   },
-      // );
-
-      // intent.launch();
+      await pinelabSdk.makePayment(doTransactionPayload);
     } catch (e) {
-      error = e.toString();
+      flutterResponse = e.toString();
     }
   }
 
-  void listenForIntentResponse() {
-    try {
-      // sub = ReceiveIntent.receivedIntentStream.listen((intent) {
-      //   print('###############');
-      //   print(intent);
-      //   print('###############');
-      // }, onError: (err) {
-      //   error = err.toString();
-      // });
-    } catch (e) {
-      error = e.toString();
-    }
+  void clearResponse() {
+    flutterResponse = '';
+    pinelabResponse = '';
   }
 
-  void clearError() {
-    error = '';
-  }
-
-  String get error => _error;
-  set error(String v) => {_error = v, update()};
+  String get flutterResponse => _flutterResponse;
+  set flutterResponse(String v) => {_flutterResponse = v, update()};
+  String get pinelabResponse => _pinelabResponse;
+  set pinelabResponse(String v) => {_pinelabResponse = v, update()};
 }
 
-class PinlabSdk extends GetxController {
+class PinlabSdk {
   final MethodChannel _channel = const MethodChannel('pinelab_sdk');
-  String _success = '';
-  String _error = '';
-
-  String get success => _success;
-  set success(String v) => {_success = v, update()};
-  String get error => _error;
-  set error(String v) => {_error = v, update()};
+  final StreamController _streamController = StreamController.broadcast();
 
   PinlabSdk() {
     _channel.setMethodCallHandler((call) async {
-      print('########################');
-      print(call);
-      print('########################');
+      print("flutter_response $call");
       final method = call.method;
       switch (method) {
         case 'success':
-          success = '$success\n ${call.arguments}';
+          _streamController.sink.add({
+            "status": 1,
+            "msg": call.arguments,
+          });
           break;
         case 'error':
-          error = '$error\n ${call.arguments}';
+          _streamController.sink.add({
+            'status': 0,
+            'msg': call.arguments['errorMessage'],
+          });
           break;
       }
     });
   }
+
+  void dispose() {
+    _streamController.close();
+  }
+
+  Stream get stream => _streamController.stream;
 
   Future makePayment(String transactionMap) async {
     await _channel.invokeMethod('makePayment', {

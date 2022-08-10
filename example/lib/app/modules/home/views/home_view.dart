@@ -26,7 +26,7 @@ class HomeView extends GetView<HomeController> {
               const SizedBox(width: 12),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: controller.clearError,
+                  onPressed: controller.clearResponse,
                   child: const Text('Clear Error'),
                 ),
               ),
@@ -36,12 +36,17 @@ class HomeView extends GetView<HomeController> {
           GetBuilder<HomeController>(
             builder: (controller) => Column(
               children: [
-                const Text('Error'),
-                Text(controller.pinelabSdk.error),
-                const Text('Success'),
-                Text(controller.pinelabSdk.success),
+                const Text('Flutter Error'),
+                Text(controller.flutterResponse),
               ],
             ),
+          ),
+          const Text('Pinelabs response'),
+          StreamBuilder(
+            stream: controller.pinelabSdk.stream,
+            builder: (context, snapshot) {
+              return Text(snapshot.data?.toString() ?? '');
+            },
           ),
         ],
       ),
