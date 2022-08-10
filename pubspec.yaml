@@ -1,6 +1,6 @@
 name: pinelab_sdk
 description: Unofficial Pinelabs Integration SDK for Keltron inhouse projects
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/keltronswgmobile/pinelab_sdk
 
 environment:
