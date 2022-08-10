@@ -2,6 +2,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'pinelab_sdk_method_channel.dart';
 
+//ignore: prefer-match-file-name
 abstract class PinelabSdkPlatform extends PlatformInterface {
   /// Constructs a PinelabSdkPlatform.
   PinelabSdkPlatform() : super(token: _token);
@@ -23,7 +24,7 @@ abstract class PinelabSdkPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
+  Future startTransaction(String transactionMap) {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 }

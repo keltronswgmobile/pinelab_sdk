@@ -1,8 +1,7 @@
-
 import 'pinelab_sdk_platform_interface.dart';
 
 class PinelabSdk {
-  Future<String?> getPlatformVersion() {
-    return PinelabSdkPlatform.instance.getPlatformVersion();
+  Future startTransaction(String transactionMap) {
+    return PinelabSdkPlatform.instance.startTransaction(transactionMap);
   }
 }
