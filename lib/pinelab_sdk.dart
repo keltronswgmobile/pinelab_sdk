@@ -11,16 +11,20 @@ class PinelabSdk {
       final method = call.method;
       switch (method) {
         case 'success':
-          streamController.sink.add({
-            'success': true,
-            'response': call.arguments,
-          });
+          streamController.sink.add(
+            PinelabResponse(
+              isSuccess: true,
+              response: call.arguments as String,
+            ),
+          );
           break;
         case 'error':
-          streamController.sink.add({
-            'success': false,
-            'response': call.arguments,
-          });
+          streamController.sink.add(
+            PinelabResponse(
+              isSuccess: false,
+              response: call.arguments as String,
+            ),
+          );
           break;
       }
     });
@@ -30,10 +34,29 @@ class PinelabSdk {
     streamController.close();
   }
 
-  StreamController get responseStreamController => streamController;
-
   Future<String?> startTransaction({required String transactionRequest}) {
     return PinelabSdkPlatform.instance
         .startTransaction(transactionRequest: transactionRequest);
+  }
+}
+
+class PinelabResponse {
+  late bool isSuccess;
+  late String response;
+
+  PinelabResponse({required this.isSuccess, required this.response});
+
+  factory PinelabResponse.fromJson(Map<String, dynamic> json) {
+    return PinelabResponse(
+      isSuccess: json['success'] as bool,
+      response: json['response'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'success': isSuccess,
+      'response': response,
+    };
   }
 }
