@@ -29,8 +29,6 @@ public class PinelabSdkPlugin implements FlutterPlugin, MethodCallHandler, Activ
   private Messenger mServerMessenger;
   private static final int BILLING_APP = 1001;
   private boolean isBound;
-  private static String response;
-  private static MethodChannel.Result channelResult;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -128,7 +126,7 @@ public class PinelabSdkPlugin implements FlutterPlugin, MethodCallHandler, Activ
       String value = bundle.getString("MASTERAPPRESPONSE");
       System.out.println("output" + value);
 
-      channelResult.success(value);
+      channel.invokeMethod("success", value);
     }
   }
 }

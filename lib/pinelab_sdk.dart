@@ -19,8 +19,7 @@ class PinelabSdk {
         case 'error':
           streamController.sink.add({
             'success': false,
-            // ignore: avoid_dynamic_calls
-            'response': call.arguments['errorMessage'] as String,
+            'response': call.arguments,
           });
           break;
       }
