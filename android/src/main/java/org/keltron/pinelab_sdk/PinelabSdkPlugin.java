@@ -29,6 +29,8 @@ public class PinelabSdkPlugin implements FlutterPlugin, MethodCallHandler, Activ
   private Messenger mServerMessenger;
   private static final int BILLING_APP = 1001;
   private boolean isBound;
+  private static String response;
+  private static MethodChannel.Result channelResult;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -44,9 +46,9 @@ public class PinelabSdkPlugin implements FlutterPlugin, MethodCallHandler, Activ
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    if ("makePayment".equals(call.method)) {
-      final String transactionMap = call.argument("transactionMap");
-      makePayment(transactionMap);
+    if ("startTransaction".equals(call.method)) {
+      final String transactionMap = call.argument("transactionRequest");
+      startTransaction(transactionMap);
       result.success(true);
       return;
     }
@@ -74,7 +76,7 @@ public class PinelabSdkPlugin implements FlutterPlugin, MethodCallHandler, Activ
     this.activity = null;
   }
 
-  public void makePayment(String transactionMap) {
+  public void startTransaction(String transactionMap) {
     try {
 
       Intent intent = new Intent("com.pinelabs.masterapp.HYBRID_REQUEST");
@@ -122,15 +124,11 @@ public class PinelabSdkPlugin implements FlutterPlugin, MethodCallHandler, Activ
 
   private  class IncomingHandler extends Handler {
     public void handleMessage(@NonNull Message msg) {
-     try{
       Bundle bundle = msg.getData();
       String value = bundle.getString("MASTERAPPRESPONSE");
       System.out.println("output" + value);
-       channel.invokeMethod("success", value);
 
-     } catch (Exception e) {
-       channel.invokeMethod("error", e);
-     }
+      channelResult.success(value);
     }
   }
 }

@@ -24,7 +24,7 @@ abstract class PinelabSdkPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future startTransaction(String transactionMap) {
+  Future<String?> startTransaction({required String transactionRequest}) {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 }

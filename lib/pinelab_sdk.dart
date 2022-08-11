@@ -33,7 +33,8 @@ class PinelabSdk {
 
   StreamController get responseStreamController => streamController;
 
-  Future startTransaction(String transactionMap) {
-    return PinelabSdkPlatform.instance.startTransaction(transactionMap);
+  Future<String?> startTransaction({required String transactionRequest}) {
+    return PinelabSdkPlatform.instance
+        .startTransaction(transactionRequest: transactionRequest);
   }
 }

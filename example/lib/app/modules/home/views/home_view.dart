@@ -38,15 +38,10 @@ class HomeView extends GetView<HomeController> {
               children: [
                 const Text('Flutter Error'),
                 Text(controller.flutterResponse),
+                const Text('Pinelabs response'),
+                Text(controller.pinelabResponse),
               ],
             ),
-          ),
-          const Text('Pinelabs response'),
-          StreamBuilder(
-            stream: controller.pinelabSdk.stream,
-            builder: (context, snapshot) {
-              return Text(snapshot.data?.toString() ?? '');
-            },
           ),
         ],
       ),

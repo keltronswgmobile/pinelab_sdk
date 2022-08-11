@@ -19,8 +19,12 @@ class MethodChannelPinelabSdk extends PinelabSdkPlatform {
   // }
 
   @override
-  Future startTransaction(String transactionMap) async {
-    await methodChannel
-        .invokeMethod('makePayment', {'transactionMap': transactionMap});
+  Future<String?> startTransaction({required String transactionRequest}) async {
+    final response = await methodChannel.invokeMethod(
+      'startTransaction',
+      {'transactionRequest': transactionRequest},
+    );
+
+    return response?.toString();
   }
 }

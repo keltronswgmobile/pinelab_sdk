@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:pinelab_sdk/pinelab_sdk.dart';
 
 class HomeController extends GetxController {
   String _flutterResponse = '';
   String _pinelabResponse = '';
-  final pinelabSdk = PinlabSdk();
+  final pinelabSdk = PinelabSdk();
 
   Future<void> openPaymentApp() async {
     try {
@@ -26,7 +26,9 @@ class HomeController extends GetxController {
       };
       final doTransactionPayload = jsonEncode(transactionMap);
 
-      await pinelabSdk.makePayment(doTransactionPayload);
+      pinelabResponse = await pinelabSdk.startTransaction(
+              transactionRequest: doTransactionPayload) ??
+          'error';
     } catch (e) {
       flutterResponse = e.toString();
     }
@@ -43,41 +45,41 @@ class HomeController extends GetxController {
   set pinelabResponse(String v) => {_pinelabResponse = v, update()};
 }
 
-class PinlabSdk {
-  final MethodChannel _channel = const MethodChannel('pinelab_sdk');
-  final StreamController _streamController = StreamController.broadcast();
+// class PinlabSdk {
+//   final MethodChannel _channel = const MethodChannel('pinelab_sdk');
+//   final StreamController _streamController = StreamController.broadcast();
 
-  PinlabSdk() {
-    _channel.setMethodCallHandler((call) async {
-      print("flutter_response $call");
-      final method = call.method;
-      switch (method) {
-        case 'success':
-          _streamController.sink.add({
-            "status": 1,
-            "msg": call.arguments,
-          });
-          break;
-        case 'error':
-          _streamController.sink.add({
-            'status': 0,
-            'msg': call.arguments['errorMessage'],
-          });
-          break;
-      }
-    });
-  }
+//   PinlabSdk() {
+//     _channel.setMethodCallHandler((call) async {
+//       print("flutter_response $call");
+//       final method = call.method;
+//       switch (method) {
+//         case 'success':
+//           _streamController.sink.add({
+//             "status": 1,
+//             "msg": call.arguments,
+//           });
+//           break;
+//         case 'error':
+//           _streamController.sink.add({
+//             'status': 0,
+//             'msg': call.arguments['errorMessage'],
+//           });
+//           break;
+//       }
+//     });
+//   }
 
-  void dispose() {
-    _streamController.close();
-  }
+//   void dispose() {
+//     _streamController.close();
+//   }
 
-  Stream get stream => _streamController.stream;
+//   Stream get stream => _streamController.stream;
 
-  Future makePayment(String transactionMap) async {
-    await _channel.invokeMethod('makePayment', {
-      'transactionMap': transactionMap,
-      'packageName': 'org.keltron.ticketapp'
-    });
-  }
-}
+//   Future makePayment(String transactionMap) async {
+//     await _channel.invokeMethod('makePayment', {
+//       'transactionMap': transactionMap,
+//       'packageName': 'org.keltron.ticketapp'
+//     });
+//   }
+// }
