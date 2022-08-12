@@ -59,4 +59,9 @@ class PinelabResponse {
       'response': response,
     };
   }
+
+  @override
+  String toString() {
+    return 'PinelabResponse{isSuccess: $isSuccess, response: $response}';
+  }
 }
